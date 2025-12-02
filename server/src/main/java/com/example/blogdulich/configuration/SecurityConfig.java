@@ -30,14 +30,24 @@ public class SecurityConfig {
             "/api/user", "/api/user/signin", "/user/introspect"
     };
 
+    private final String[] PUBLIC_SWAGGER_ENDPOINTS = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
     private final String[] GET_PUBLIC_ENDPOINTS = {
-            "/api/blog/public", "/api/blog/{id}", "/api/user/{id}", "/api/comment/{blogId}"
+            "/api/blog/public",
+            "/api/blog/{id}",
+            "/api/user/{id}",
+            "/api/comment/{blogId}",
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINTS).permitAll()
+                request.requestMatchers(HttpMethod.GET, PUBLIC_SWAGGER_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/all", "/api/blog/all").hasAnyAuthority("SCOPE_ADMIN")
                         .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()

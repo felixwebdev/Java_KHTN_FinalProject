@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = 'http://localhost:8080/api';
+  const API_BASE = 'https://blogy-java-module4-blogy-java-md4.onrender.com/api';
   const ENDPOINT = '/blog/public'; 
 
   let postsContainer = document.getElementById('listItem');

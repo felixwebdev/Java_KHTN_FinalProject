@@ -4,7 +4,7 @@
 
     async function loadPosts() {
         try {
-            const res = await fetch("http://localhost:8080/api/blog/home", {
+            const res = await fetch("https://blogy-java-module4-blogy-java-md4.onrender.com/api/blog/home", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

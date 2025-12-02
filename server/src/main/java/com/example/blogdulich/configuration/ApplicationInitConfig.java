@@ -4,17 +4,15 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.blogdulich.entity.User;
 import com.example.blogdulich.enums.ROLE;
-import com.example.blogdulich.mapper.UserMapper;
 import com.example.blogdulich.repository.UserRepository;
-import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
@@ -47,14 +45,17 @@ public class ApplicationInitConfig {
         };
     }
 
-    @Bean
-    public Cloudinary cloudinary() {
-        Dotenv dotenv = Dotenv.load();
 
+    @Bean
+    public Cloudinary cloudinary(
+            @Value("${cloudinary.cloud-name}") String cloudName,
+            @Value("${cloudinary.api-key}") String apiKey,
+            @Value("${cloudinary.api-secret}") String apiSecret
+    ) {
         return new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", dotenv.get("CLOUDINARY_CLOUD_NAME"),
-                "api_key", dotenv.get("CLOUDINARY_API_KEY"),
-                "api_secret", dotenv.get("CLOUDINARY_API_SECRET"),
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret,
                 "secure", true
         ));
     }

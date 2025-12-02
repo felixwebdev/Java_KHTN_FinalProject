@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const API_BASE = 'http://localhost:8080/api';
+  const API_BASE = 'https://blogy-java-module4-blogy-java-md4.onrender.com/api';
   const ENDPOINT = '/blog';
 
   const overlayer = document.getElementById('overlayer');

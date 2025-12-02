@@ -13,7 +13,7 @@ btnLogout?.addEventListener('click', (e) => {
   window.location.href = 'index.html';
 });
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://blogy-java-module4-blogy-java-md4.onrender.com/api';
 const usersTableBody = document.querySelector('#usersTable tbody');
 
 async function loadUsers() {
@@ -106,7 +106,7 @@ function hideLoader() {
 }
 
 (function () {
-        const API_BASE = 'http://localhost:8080/api';
+        const API_BASE = 'https://blogy-java-module4-blogy-java-md4.onrender.com/api';
         const token = localStorage.getItem('token');
         const postsListEl = document.getElementById('postsList');
         const noPostsEl = document.getElementById('noPosts');

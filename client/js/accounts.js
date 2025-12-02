@@ -69,7 +69,7 @@ signupForm.addEventListener("submit", async (e) => {
     const dob = signupForm.querySelector('input[type="date"]').value;
 
     try {
-        const res = await fetch("http://localhost:8080/api/user", {
+        const res = await fetch("https://blogy-java-module4-blogy-java-md4.onrender.com/api/user", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -108,7 +108,7 @@ document.getElementById("signinForm").addEventListener("submit", async (e) => {
     const password = e.target.querySelector('input[type="password"]').value;
 
     try {
-        const res = await fetch("http://localhost:8080/api/user/signin", {
+        const res = await fetch("https://blogy-java-module4-blogy-java-md4.onrender.com/api/user/signin", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
