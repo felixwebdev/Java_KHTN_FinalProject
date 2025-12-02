@@ -1,0 +1,232 @@
+const authModal = document.getElementById("authModal");
+const openBtn = document.getElementById("openAuthModal");
+const closeBtn = document.getElementById("closeAuthModal");
+const signOutBtn = document.getElementById("btn-signOut");
+
+const signinForm = document.getElementById("signinForm");
+const signupForm = document.getElementById("signupForm");
+
+const toSignin = document.getElementById("toSignin");
+const toSignup = document.getElementById("toSignup");
+
+const title = document.getElementById("authTitle");
+
+const token = localStorage.getItem("token");
+const accountNotSignedIn = document.querySelector(".account-not-signedin");
+const accountSignedIn = document.querySelector(".account-signedin");
+
+if (accountNotSignedIn && accountSignedIn) {
+    if (token) {
+        accountNotSignedIn.classList.add("displayNone");
+        accountSignedIn.classList.remove("displayNone");
+    } else {
+        accountNotSignedIn.classList.remove("displayNone");
+        accountSignedIn.classList.add("displayNone");
+    }
+} else {
+    console.warn("Không tìm thấy phần tử account-notSignedIn hoặc account-signedIn");
+}
+
+
+// Mở modal
+openBtn.onclick = () => {
+    authModal.style.display = "block";
+};
+
+// Đóng modal
+closeBtn.onclick = () => {
+    authModal.style.display = "none";
+};
+
+// Click ra ngoài cũng tắt
+window.onclick = (e) => {
+    if (e.target === authModal) authModal.style.display = "none";
+};
+
+// Chuyển sang Sign Up
+toSignup.onclick = (e) => {
+    e.preventDefault();
+    signinForm.classList.remove("active");
+    signupForm.classList.add("active");
+    title.innerText = "Sign Up";
+};
+
+// Chuyển sang Sign In
+toSignin.onclick = (e) => {
+    e.preventDefault();
+    signupForm.classList.remove("active");
+    signinForm.classList.add("active");
+    title.innerText = "Sign In";
+};
+
+
+signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = signupForm.querySelector('input[type="email"]').value;
+    const password = signupForm.querySelector('input[type="password"]').value;
+    const fullName = signupForm.querySelector('input[type="text"]').value;
+    const dob = signupForm.querySelector('input[type="date"]').value;
+
+    try {
+        const res = await fetch("http://localhost:8080/api/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password,
+                displayName: fullName,
+                dob
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "Signup failed!");
+            return;
+        }
+
+        alert("Signup success!");
+        console.log("User:", data);
+
+        // Optional: auto switch to sign in form
+        document.getElementById("toSignin").click();
+
+    } catch (err) {
+        console.error(err);
+        alert("Server error!");
+    }
+});
+
+document.getElementById("signinForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = e.target.querySelector('input[type="email"]').value;
+    const password = e.target.querySelector('input[type="password"]').value;
+
+    try {
+        const res = await fetch("http://localhost:8080/api/user/signin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message || "Invalid email or password.");
+            return;
+        }
+
+        alert("Sign in successful!");
+
+        if (data.result.token) {
+            localStorage.setItem("token", data.result.token);
+        }
+
+        window.location.reload();
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong.");
+    }
+});
+
+signOutBtn.onclick = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+}
+
+const API_BASE = 'http://localhost:8080/api'; // nếu đã có, bỏ khai báo lại
+
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
+async function isAdminToken(token) {
+  if (!token) return false;
+  // prefer server verification if available
+  try {
+    const resp = await fetch(`${API_BASE}/auth/me`, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
+    });
+    if (resp.ok) {
+      const me = await resp.json();
+      // check role/authorities structure your backend returns
+      const roles = me.roles || me.authorities || (me.author && me.author.roles) || [];
+      if (Array.isArray(roles)) {
+        return roles.includes('ADMIN') || roles.includes('ROLE_ADMIN') || roles.includes('admin');
+      }
+      if (typeof roles === 'string') {
+        return roles.toLowerCase().includes('admin');
+      }
+    }
+  } catch (err) {
+    // fallback to decoding token
+  }
+
+  // fallback: decode JWT
+  const payload = parseJwt(token);
+  if (!payload) return false;
+  const tokenRoles = payload.role || payload.roles || payload.authorities || payload.scope || payload.scopes;
+  if (Array.isArray(tokenRoles)) {
+    return tokenRoles.some(r => String(r).toLowerCase().includes('admin'));
+  }
+  if (typeof tokenRoles === 'string') {
+    return String(tokenRoles).toLowerCase().includes('admin') || String(tokenRoles).toLowerCase().includes('role_admin') || tokenRoles === 'ADMIN';
+  }
+  // some tokens put roles in 'roles' claim as [{authority:'ROLE_ADMIN'}, ...]
+  if (Array.isArray(payload.authorities) && payload.authorities.some(a => String(a.authority || a).toLowerCase().includes('admin'))) return true;
+
+  return false;
+}
+
+async function redirectAfterLogin(token, fallback = '/index.html') {
+  if (!token) {
+    window.location.href = fallback;
+    return;
+  }
+  const admin = await isAdminToken(token);
+  if (admin) {
+    // don't redirect if already on admin page
+    if (!window.location.pathname.includes('admin.html')) window.location.href = 'admin.html';
+  } else {
+    // normal user: redirect to default (home or myBlogs)
+    if (window.location.pathname.includes('login.html')) window.location.href = fallback;
+  }
+}
+
+// Hook this to your successful login flow (where you get token)
+async function onLoginSuccess(token) {
+  localStorage.setItem('token', token);
+  await redirectAfterLogin(token, 'myBlogs.html'); // adjust user fallback
+}
+
+// Also when the login page loads and a token already exists, redirect admins immediately:
+(async function checkExistingToken() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  // If already logged in as admin, redirect to admin.
+  const admin = await isAdminToken(token);
+  if (admin && !window.location.pathname.includes('admin.html')) {
+    window.location.href = 'admin.html';
+  }
+})();
+

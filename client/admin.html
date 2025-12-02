@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Console</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/subStyle.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Admin Console</h1>
+      <div>
+        <button id="btn-logout" class="btn btn-outline-secondary btn-sm">Logout</button>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">Users</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab">Blog Posts</button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+      <div class="tab-pane fade show active" id="users" role="tabpanel">
+        <div class="table-responsive">
+          <table class="table table-sm table-striped" id="usersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="posts" role="tabpanel">
+        <div class="d-flex justify-content-between mb-2">
+          <div>
+            <label class="form-label me-2">Per page</label>
+            <select id="adminPerPage" class="form-select form-select-sm d-inline-block" style="width:auto">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <div>
+            <input id="adminSearch" class="form-control form-control-sm" placeholder="Search posts by title" style="width:260px">
+          </div>
+        </div>
+
+        <div id="postsList" class="list-group mb-3"></div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <div id="adminPostsInfo" class="text-muted small">--</div>
+          <nav aria-label="Posts pagination">
+            <div id="adminPagination" class="custom-pagination"></div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Are you sure you want to delete this post?</p>
+          <div class="text-end">
+            <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn btn-danger btn-sm">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- overlay + loader -->
+  <div id="overlayer" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1050;align-items:center;justify-content:center;">
+    <div class="spinner-border text-light" role="status"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
