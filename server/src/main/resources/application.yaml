@@ -4,7 +4,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/BlogDuLich
+      uri: mongodb+srv://trankhanh0525_db_user:onlyadminknow@cluster0.mquwt9e.mongodb.net
 
 
 jwt:

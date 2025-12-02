@@ -17,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/user")
@@ -57,5 +58,10 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponse getUserById(@PathVariable String id) {
         return userService.getUser(id);
+    }
+
+    @GetMapping("/all")
+    public List<UserResponse> getAllUser() {
+        return userService.getAllUser();
     }
 }

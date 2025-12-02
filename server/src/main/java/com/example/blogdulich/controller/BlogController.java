@@ -68,6 +68,11 @@ public class BlogController {
         return blogService.getMyAllBlog(pageable);
     }
 
+    @GetMapping("/all")
+    public Page<Blog> getAllBlog(Pageable pageable) {
+         return blogService.getAllBlog(pageable);
+    }
+
     @GetMapping("/{id}")
     public Blog getBlog(@PathVariable String id) {
         return blogService.getBlog(id);
@@ -82,5 +87,10 @@ public class BlogController {
     @GetMapping("/newest")
     public List<Blog> getTop3LatestBlog(){
         return blogService.getTop3LatestBlog();
+    }
+
+    @GetMapping("/home")
+    public List<Blog> getHomeItems() {
+        return blogService.getTop4LatestBlog();
     }
 }

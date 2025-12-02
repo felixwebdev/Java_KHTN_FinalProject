@@ -22,4 +22,5 @@ public interface BlogRepository extends MongoRepository<Blog, String> {
     Page<Blog> searchPublicBlogs(String query, Pageable pageable);
 
     List<Blog> findTop3ByOrderByCreatedAtDesc();
+    List<Blog> findTop4ByOrderByCreatedAtDesc();
 }

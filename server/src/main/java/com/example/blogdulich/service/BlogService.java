@@ -126,11 +126,19 @@ public class BlogService {
         return blogRepository.findTop3ByOrderByCreatedAtDesc();
     }
 
+    public List<Blog> getTop4LatestBlog() {
+        return blogRepository.findTop4ByOrderByCreatedAtDesc();
+    }
+
     public Blog updateStatus(BlogUpdateStatusRequest request) {
         Blog blog = blogRepository.findById(request.getId()).orElseThrow(()->{throw new AppException(ErrorCode.BLOG_NOT_FOUND);});
         if (request.getStatus() != blog.getIsPublic()) {
             blog.setIsPublic(request.getStatus());
         }
         return blogRepository.save(blog);
+    }
+
+    public Page<Blog> getAllBlog(Pageable pageable){
+        return blogRepository.findAll(pageable);
     }
 }

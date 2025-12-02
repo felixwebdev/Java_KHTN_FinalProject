@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.blogdulich.entity.User;
 import com.example.blogdulich.enums.ROLE;
+import com.example.blogdulich.mapper.UserMapper;
 import com.example.blogdulich.repository.UserRepository;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Date;
 import java.util.HashSet;
 
 @Slf4j
@@ -36,6 +38,7 @@ public class ApplicationInitConfig {
                         .email("admin@blog.com")
                         .password(passwordEncoder.encode("admin"))
                         .roles(roles)
+                        .createdAt(new Date())
                         .build();
 
                 userRepository.save(user);
@@ -55,4 +58,5 @@ public class ApplicationInitConfig {
                 "secure", true
         ));
     }
+
 }

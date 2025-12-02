@@ -1,6 +1,5 @@
 package com.example.blogdulich.service;
 
-import com.example.blogdulich.dto.request.AuthenticationRequest;
 import com.example.blogdulich.dto.request.UserCreationRequest;
 import com.example.blogdulich.dto.response.UserResponse;
 import com.example.blogdulich.entity.User;
@@ -12,14 +11,13 @@ import com.example.blogdulich.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +56,9 @@ public class UserService {
     public UserResponse getUser(String id) {
         User user = userRepository.findById(id).orElseThrow(()->{throw new AppException(ErrorCode.USER_NOT_FOUND);});
         return userMapper.toDto(user);
+    }
+
+    public List<UserResponse> getAllUser() {
+        return userMapper.toListDto(userRepository.findAll());
     }
 }
